@@ -2,6 +2,25 @@ import { PostModel } from "../generated/prisma/models";
 import { prisma } from "../prisma";
 import { FeedSort, Post, Tag, User, VoteTarget } from "../types";
 
+export async function getPostById(id: string): Promise<Post | undefined> {
+  const post = await prisma.post.findUnique({ where: { id } });
+  if (!post) return;
+
+  const [tagMap, ccMap] = await Promise.all([
+    tagsForPosts([id]),
+    commentCountsForPosts([id]),
+  ]);
+
+  return mapPostRow(post, tagMap.get(id) ?? [], ccMap.get(id) ?? 0);
+}
+
+export async function getAuthorById(authorId: string): Promise<User> {
+  const row = await prisma.userProfile.findUnique({ where: { id: authorId } });
+  return row
+    ? { id: row.id, username: row.username }
+    : { id: authorId, username: `user_${authorId.slice(0, 6)}` };
+}
+
 export async function batchAuthorsForIds(
   authorIds: string[],
 ): Promise<Map<string, User>> {
@@ -45,7 +64,7 @@ export async function listPostsSorted(
 
   const [tagMap, ccMap, vsMap, uvMap] = await Promise.all([
     tagsForPosts(ids),
-    commentCountsForPost(ids),
+    commentCountsForPosts(ids),
     voteSumsForPost(ids),
     userVotesForPosts(userId, ids),
   ]);
@@ -104,7 +123,7 @@ async function tagsForPosts(postIds: string[]): Promise<Map<string, string[]>> {
   return m;
 }
 
-async function commentCountsForPost(
+async function commentCountsForPosts(
   postIds: string[],
 ): Promise<Map<string, number>> {
   if (postIds.length === 0) return new Map();
@@ -206,4 +225,12 @@ export async function getUserVote(
 
   const v = row?.value;
   return v === -1 || v === 1 ? v : 0;
+}
+
+export async function getPostScore(postId: string): Promise<number> {
+  const agg = await prisma.vote.aggregate({
+    where: { targetType: "post", targetId: postId },
+    _sum: { value: true },
+  });
+  return Number(agg._sum.value ?? 0);
 }

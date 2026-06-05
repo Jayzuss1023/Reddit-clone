@@ -21,7 +21,6 @@ export function VoteButtons({
   score: number;
   userVote: -1 | 0 | 1;
 }) {
-  console.log("tagetId: ", targetId, "+ userVote: ", userVote);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
   const isPost = target === "post";
@@ -31,8 +30,13 @@ export function VoteButtons({
       if (isPost) {
         await votePostAction(targetId, value);
       }
+      router.refresh();
     });
   }
+
+  const scoreClass = isPost
+    ? "min-w-[2ch] text-center gap-0.5 py-1 text-sm"
+    : "min-1-[1.5ch] text-center gap-0 text-xs";
 
   return (
     <div
@@ -54,7 +58,15 @@ export function VoteButtons({
       >
         <ChevronUp className={cn(isPost ? "size-6" : "size-4")} />
       </button>
-      <span>{score}</span>
+      <span
+        className={cn(
+          scoreClass,
+          userVote === 1 && "text-upvote",
+          userVote === -1 && "text-downvote",
+        )}
+      >
+        {score}
+      </span>
       <button
         onClick={() => vote(-1)}
         disabled={pending || userVote === -1}

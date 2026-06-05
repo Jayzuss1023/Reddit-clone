@@ -24,3 +24,12 @@ export type Post = {
 };
 
 export type VoteTarget = "post" | "comment";
+
+export type Comment = {
+  id: string;
+  postId: string;
+  authorId: string;
+  parentId: string | null;
+  body: string;
+  createdAt: string;
+};
