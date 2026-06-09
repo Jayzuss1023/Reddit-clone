@@ -7,6 +7,7 @@ import { Badge } from "../ui/badge";
 import { formatRelativeTime } from "@/lib/format";
 import { useState } from "react";
 import { CommentComposer } from "./comment-composer";
+import { Button } from "../ui/button";
 
 export function CommentNode({
   node,
@@ -17,18 +18,55 @@ export function CommentNode({
   postAuthorId: string;
   sessionUser: User | null;
 }) {
-  console.log(node);
+  const isOp = node.authorId === postAuthorId;
+  const [showReply, setShowReply] = useState(false);
   return (
-    <li>
-      <div>
+    <li className="relative">
+      <div className="flex gap-2">
         <VoteButtons
           target="comment"
           targetId={node.id}
           score={node.score}
           userVote={node.userVote}
         />
-        <div>
-          <div></div>
+        <div className="min-w-0 flex-1 border-l border-border pl-3">
+          <div className="mb-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">u/{node.author}</span>
+            {isOp ? (
+              <Badge
+                variant="secondary"
+                className="h-5 px-1.5 text-[10px] font-semibold uppercase"
+              >
+                OP
+              </Badge>
+            ) : null}
+            <span>•</span>
+            <span>{formatRelativeTime(node.createdAt)}</span>
+          </div>
+          <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+            {node.body}
+          </p>
+          <div className="flex flex-wrap mt-2 items-center gap-3 text-xs font-medium text-muted-foreground">
+            {sessionUser ? (
+              <Button variant="secondary" className="hover:text-foreground">
+                Reply
+              </Button>
+            ) : null}
+            <Button className="hover:text-foreground">Share</Button>
+          </div>
+
+          {node.children.length > 0 && (
+            <ul className="mt-4 border-t border-border pt-3">
+              {node.children.map((ch) => (
+                <CommentNode
+                  key={ch.id}
+                  node={ch}
+                  postAuthorId={postAuthorId}
+                  sessionUser={sessionUser}
+                />
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </li>

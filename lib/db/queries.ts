@@ -36,7 +36,6 @@ export async function batchAuthorsForIds(
   for (const row of rows) {
     result.set(row.id, { id: row.id, username: row.username });
   }
-
   for (const id of unique) {
     if (!result.has(id)) {
       result.set(id, { id, username: `user_${id.slice(5, 15)}` });

@@ -16,7 +16,7 @@ export function CommentThread({
   }
 
   return (
-    <ul>
+    <ul className="space-y-6">
       {tree.map((node) => (
         <CommentNode
           key={node.id}
