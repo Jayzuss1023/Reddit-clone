@@ -1,5 +1,6 @@
 "use client";
 
+import { voteCommentAction } from "@/lib/actions/comment";
 import { votePostAction } from "@/lib/actions/post";
 // import { voteCommentAction } from "@/lib/actions/comments";
 // import { votePostAction } from "@/lib/actions/posts";
@@ -29,6 +30,8 @@ export function VoteButtons({
     startTransition(async () => {
       if (isPost) {
         await votePostAction(targetId, value);
+      } else {
+        await voteCommentAction(targetId, value);
       }
       router.refresh();
     });

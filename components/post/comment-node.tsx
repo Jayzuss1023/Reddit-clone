@@ -48,12 +48,28 @@ export function CommentNode({
           </p>
           <div className="flex flex-wrap mt-2 items-center gap-3 text-xs font-medium text-muted-foreground">
             {sessionUser ? (
-              <Button variant="secondary" className="hover:text-foreground">
+              <Button
+                variant="secondary"
+                className="hover:text-foreground"
+                onClick={() => setShowReply((v) => !v)}
+              >
                 Reply
               </Button>
             ) : null}
             <Button className="hover:text-foreground">Share</Button>
           </div>
+
+          {sessionUser && showReply && (
+            <div className="mt-3 border-t border-border pt-3">
+              <CommentComposer
+                postId={node.postId}
+                user={sessionUser}
+                parentId={node.id}
+                placeholder="Write a reply..."
+                compact
+              />
+            </div>
+          )}
 
           {node.children.length > 0 && (
             <ul className="mt-4 border-t border-border pt-3">
