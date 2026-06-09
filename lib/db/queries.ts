@@ -1,6 +1,7 @@
+import { EnrichedCommentNode, nestCommentRows } from "../comment-tree";
 import { PostModel } from "../generated/prisma/models";
 import { prisma } from "../prisma";
-import { FeedSort, Post, Tag, User, VoteTarget } from "../types";
+import { Comment, FeedSort, Post, Tag, User, VoteTarget } from "../types";
 
 export async function getPostById(id: string): Promise<Post | undefined> {
   const post = await prisma.post.findUnique({ where: { id } });
@@ -233,4 +234,91 @@ export async function getPostScore(postId: string): Promise<number> {
     _sum: { value: true },
   });
   return Number(agg._sum.value ?? 0);
+}
+
+export async function listCommentsForPost(postId: string): Promise<Comment[]> {
+  const rows = await prisma.comment.findMany({ where: { postId } });
+  return rows.map((c) => ({
+    id: c.id,
+    postId: c.postId,
+    authorId: c.authorId,
+    parentId: c.parentId,
+    body: c.body,
+    createdAt: c.createdAt.toISOString(),
+  }));
+}
+
+async function batchCommentScores(
+  commentIds: string[],
+): Promise<Map<string, number>> {
+  if (commentIds.length === 0) return new Map();
+  const rows = await prisma.vote.groupBy({
+    by: ["targetId"],
+    where: {
+      targetType: "comment",
+      targetId: { in: commentIds },
+    },
+    _sum: { value: true },
+  });
+
+  const m = new Map<string, number>();
+  for (const r of rows) {
+    m.set(r.targetId, Number(r._sum.value ?? 0));
+  }
+
+  return m;
+}
+
+async function batchUserVotesForComments(
+  userId: string,
+  commentIds: string[],
+): Promise<Map<string, -1 | 0 | 1>> {
+  const m = new Map<string, -1 | 0 | 1>();
+  if (commentIds.length === 0) return m;
+  const rows = await prisma.vote.findMany({
+    where: {
+      userId,
+      targetType: "comment",
+      targetId: { in: commentIds },
+    },
+  });
+  for (const r of rows) {
+    const v = r.value;
+    m.set(r.targetId, v === -1 || v === 1 ? v : 0);
+  }
+  return m;
+}
+
+export async function getCommentTree(
+  postId: string,
+  sessionUserId?: string,
+): Promise<EnrichedCommentNode[]> {
+  const flat = await listCommentsForPost(postId);
+  if (flat.length === 0) return [];
+  const authorIds = [...new Set(flat.map((c) => c.authorId))];
+  const authorMap = await batchAuthorsForIds(authorIds);
+
+  const commentIds = flat.map((c) => c.id);
+  // Returns Map<commentId, {commentId, sum of votes for comment}>
+  const scoreMap = await batchCommentScores(commentIds);
+  const voteMap = sessionUserId
+    ? await batchUserVotesForComments(sessionUserId, commentIds)
+    : new Map<string, -1 | 0 | 1>();
+
+  const enriched = flat
+    .map((c) => {
+      const author = authorMap.get(c.authorId);
+      if (!author) return null;
+
+      return {
+        ...c,
+        author: author.username,
+        score: scoreMap.get(c.id) ?? 0,
+        userVote: (voteMap.get(c.id) ?? 0) as -1 | 0 | 1,
+      };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null);
+
+  nestCommentRows(enriched);
+  return nestCommentRows(enriched);
 }
