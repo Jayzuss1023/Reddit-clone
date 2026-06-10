@@ -1,8 +1,10 @@
+import { UserAvatar } from "@neondatabase/auth/react";
+import { ArrowLeft, MessageSquare, Share2 } from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import { VoteButtons } from "@/components/feed/vote-buttons";
 import { CommentComposer } from "@/components/post/comment-composer";
 import { CommentThread } from "@/components/post/comment-thread";
-// import { CommentComposer } from "@/components/post/comment-composer";
-// import { CommentThread } from "@/components/post/comment-thread";
 import { Separator } from "@/components/ui/separator";
 import { getSessionUser } from "@/lib/auth";
 import {
@@ -11,14 +13,9 @@ import {
   getPostById,
   getPostScore,
   getUserVote,
-  listTags,
 } from "@/lib/db/queries";
 import { formatRelativeTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { UserAvatar } from "@neondatabase/auth/react";
-import { ArrowLeft, MessageSquare, Share2 } from "lucide-react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
 
 export default async function PostPage({
   params,
@@ -60,10 +57,10 @@ export default async function PostPage({
             {post.title}
           </h1>
           <div className="mt-3 flex gap-3">
-            {post.tagSlugs.map((tag, index) => (
+            {post.tagSlugs.map((tag) => (
               <Link
                 href={`/$tag=${encodeURIComponent(tag)}`}
-                key={tag + index}
+                key={tag}
                 className={cn(
                   "inline-flex rounded-md px-2 py-0.5 text-sm font-medium bg-tag-bg text-tag-text",
                 )}

@@ -17,7 +17,6 @@ export function formatRelativeTime(iso: string) {
     day: "numeric",
     year: "numeric",
   });
-  return sec;
 }
 
 export function formatCount(n: number): string {

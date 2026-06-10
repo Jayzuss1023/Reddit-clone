@@ -1,9 +1,9 @@
+import { SignedIn, SignedOut, UserButton } from "@neondatabase/auth/react";
 import { Bell, Search } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { SignedIn, SignedOut, UserButton } from "@neondatabase/auth/react";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export function Navbar() {
   return (

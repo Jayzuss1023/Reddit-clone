@@ -1,11 +1,12 @@
 "use client";
-import { User } from "@/lib/types";
 import { UserAvatar } from "@neondatabase/auth/react";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
-import React, { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import type React from "react";
+import { useRef, useState, useTransition } from "react";
 import { createCommentAction } from "@/lib/actions/comment";
+import type { User } from "@/lib/types";
+import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 
 export function CommentComposer({
   postId,

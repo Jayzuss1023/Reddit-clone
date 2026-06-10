@@ -1,11 +1,13 @@
 // import { formatRelativeTime } from "@/lib/format";
-import { formatRelativeTime } from "@/lib/format";
-import { Post, Tag, User } from "@/lib/types";
-import { cn } from "@/lib/utils";
+
 import { UserAvatar } from "@neondatabase/auth/react";
 import { MessageSquare, Share2 } from "lucide-react";
 import Link from "next/link";
+import { formatRelativeTime } from "@/lib/format";
+import type { Post, Tag, User } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { VoteButtons } from "./vote-buttons";
+
 // import { VoteButtons } from "./vote-buttons";
 
 function snippet(body: string, max = 160) {

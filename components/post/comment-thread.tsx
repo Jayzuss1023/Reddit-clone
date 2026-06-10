@@ -1,5 +1,5 @@
-import { EnrichedCommentNode } from "@/lib/comment-tree";
-import { User } from "@/lib/types";
+import type { EnrichedCommentNode } from "@/lib/comment-tree";
+import type { User } from "@/lib/types";
 import { CommentNode } from "./comment-node";
 
 export function CommentThread({

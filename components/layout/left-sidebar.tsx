@@ -1,11 +1,10 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Flame, Home, LayoutGrid } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-
-import { Tag } from "@/lib/types";
+import type { Tag } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { JoinCtaCard } from "./join-cta-card";
 import { LeftTags } from "./left-tags";
 

@@ -1,7 +1,7 @@
-import { EnrichedCommentNode, nestCommentRows } from "../comment-tree";
-import { PostModel } from "../generated/prisma/models";
+import { type EnrichedCommentNode, nestCommentRows } from "../comment-tree";
+import type { PostModel } from "../generated/prisma/models";
 import { prisma } from "../prisma";
-import { Comment, FeedSort, Post, Tag, User, VoteTarget } from "../types";
+import type { Comment, FeedSort, Post, Tag, User, VoteTarget } from "../types";
 
 export async function getPostById(id: string): Promise<Post | undefined> {
   const post = await prisma.post.findUnique({ where: { id } });

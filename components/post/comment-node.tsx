@@ -1,13 +1,13 @@
 "use client";
 
-import { EnrichedCommentNode } from "@/lib/comment-tree";
-import { User } from "@/lib/types";
+import { useState } from "react";
+import type { EnrichedCommentNode } from "@/lib/comment-tree";
+import { formatRelativeTime } from "@/lib/format";
+import type { User } from "@/lib/types";
 import { VoteButtons } from "../feed/vote-buttons";
 import { Badge } from "../ui/badge";
-import { formatRelativeTime } from "@/lib/format";
-import { useState } from "react";
-import { CommentComposer } from "./comment-composer";
 import { Button } from "../ui/button";
+import { CommentComposer } from "./comment-composer";
 
 export function CommentNode({
   node,

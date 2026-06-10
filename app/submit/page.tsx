@@ -1,7 +1,7 @@
-import { SubmitFormPost } from "@/components/post/submit-form-post";
-import { getSessionUser } from "@/lib/auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { SubmitFormPost } from "@/components/post/submit-form-post";
+import { getSessionUser } from "@/lib/auth";
 
 export default async function SubmitPage() {
   const user = await getSessionUser();

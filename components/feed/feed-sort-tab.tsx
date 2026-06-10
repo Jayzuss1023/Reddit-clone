@@ -1,7 +1,7 @@
-import { FeedSort } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import { Flame, Sparkles, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import type { FeedSort } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 function hrefFor(sort: FeedSort, tag?: string) {
   const params = new URLSearchParams();

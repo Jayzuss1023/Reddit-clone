@@ -2,9 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { getCurrentUserId } from "../auth";
-import { prisma } from "../prisma";
-import { Comment } from "../types";
 import { getUserVote } from "../db/queries";
+import { prisma } from "../prisma";
+import type { Comment } from "../types";
 
 export type CommentFormState = { error?: string; ok?: boolean } | null;
 
@@ -48,7 +48,7 @@ export async function addComment(input: {
   parentId: string | null;
   body: string;
 }): Promise<void> {
-  const row = await prisma.comment.create({
+  await prisma.comment.create({
     data: {
       postId: input.postId,
       authorId: input.authorId,

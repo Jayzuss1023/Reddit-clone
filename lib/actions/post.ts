@@ -1,12 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { getCurrentUserId } from "../auth";
 import { getUserVote } from "../db/queries";
+import type { PostModel } from "../generated/prisma/models";
 import { prisma } from "../prisma";
-import { PostModel } from "../generated/prisma/models";
-import { Post } from "../types";
-import { redirect } from "next/navigation";
+import type { Post } from "../types";
 
 export async function votePostAction(postId: string, value: -1 | 1) {
   const userId = await getCurrentUserId();

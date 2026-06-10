@@ -1,4 +1,4 @@
-import { Comment, User } from "./types";
+import type { Comment } from "./types";
 
 export type EnrichedCommentNode = {
   id: string;

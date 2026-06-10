@@ -1,7 +1,8 @@
 // import { formatCount } from "@/lib/format";
-import { formatCount } from "@/lib/format";
-import { Tag } from "@/lib/types";
+
 import Link from "next/link";
+import { formatCount } from "@/lib/format";
+import type { Tag } from "@/lib/types";
 
 export function LeftTags({ items }: { items: { tag: Tag; count: number }[] }) {
   const sorted = [...items].sort((a, b) => b.count - a.count).slice(0, 8);

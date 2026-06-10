@@ -1,13 +1,13 @@
 "use client";
 
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { voteCommentAction } from "@/lib/actions/comment";
 import { votePostAction } from "@/lib/actions/post";
 // import { voteCommentAction } from "@/lib/actions/comments";
 // import { votePostAction } from "@/lib/actions/posts";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
 
 type VoteTarget = "post" | "comment";
 
@@ -49,6 +49,7 @@ export function VoteButtons({
       )}
     >
       <button
+        type="button"
         onClick={() => vote(1)}
         disabled={pending || userVote === 1}
         className={cn(
@@ -71,6 +72,7 @@ export function VoteButtons({
         {score}
       </span>
       <button
+        type="button"
         onClick={() => vote(-1)}
         disabled={pending || userVote === -1}
         className={cn(

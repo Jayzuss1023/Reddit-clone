@@ -1,12 +1,15 @@
 import { createNeonAuth } from "@neondatabase/auth/next/server";
 import { cache } from "react";
-import { User } from "./types";
 import { ensureUserProfile } from "./db/user-profile";
+import type { User } from "./types";
+
+if (!process.env.NEON_AUTH_BASE_COOKIE_SECRET)
+  throw new Error("NEON AUTH BASE COOKIE SECRET SET");
 
 export const auth = createNeonAuth({
   baseUrl: process.env.NEON_AUTH_BASE_URL!,
   cookies: {
-    secret: process.env.NEON_AUTH_BASE_COOKIE_SECRET!,
+    secret: process.env.NEON_AUTH_BASE_COOKIE_SECRET,
   },
 });
 

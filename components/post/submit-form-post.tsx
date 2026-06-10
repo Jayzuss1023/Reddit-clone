@@ -1,11 +1,11 @@
 "use client";
 
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
 import { useActionState } from "react";
 import { createPostAction } from "@/lib/actions/post";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
 
 export function SubmitFormPost() {
   const [state, action, pending] = useActionState(createPostAction, null);
@@ -48,6 +48,12 @@ export function SubmitFormPost() {
           Comma-seperated. Defaults to #webdev if empty
         </p>
       </div>
+
+      {state?.error ? (
+        <p className="text-sm text-destructive" role="alert">
+          {state.error}
+        </p>
+      ) : null}
 
       <Button type="submit" disabled={pending}>
         {pending ? "Publishing..." : "Publish Post"}
