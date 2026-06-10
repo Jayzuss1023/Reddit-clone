@@ -321,3 +321,18 @@ export async function getCommentTree(
   nestCommentRows(enriched);
   return nestCommentRows(enriched);
 }
+
+export async function tagPostCounts(): Promise<{ tag: Tag; count: number }[]> {
+  const allTags = await listTags();
+  const rows = await prisma.postTag.groupBy({
+    by: ["tagSlug"],
+    _count: { _all: true },
+  });
+
+  const countMap = new Map(rows.map((r) => [r.tagSlug, r._count._all]));
+
+  return allTags.map((tag) => ({
+    tag,
+    count: countMap.get(tag.slug) ?? 0,
+  }));
+}

@@ -7,6 +7,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 
 import { Tag } from "@/lib/types";
 import { JoinCtaCard } from "./join-cta-card";
+import { LeftTags } from "./left-tags";
 
 const nav = [
   { href: "/", label: "Home", icon: Home, match: "home" as const },
@@ -21,10 +22,10 @@ const nav = [
 
 export function LeftSidebar({
   showCta,
-  // tagsWithCounts,
+  tagsWithCounts,
 }: {
   showCta: boolean;
-  // tagsWithCounts: { tag: Tag; count: number }[];
+  tagsWithCounts: { tag: Tag; count: number }[];
 }) {
   const pathname = usePathname();
   const sp = useSearchParams();
@@ -68,10 +69,10 @@ export function LeftSidebar({
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide trext-muted-foreground">
           Top Tags
         </p>
-        {/* <LeftTags items={tagsWithCounts} /> */}
+        <LeftTags items={tagsWithCounts} />
       </div>
       {showCta && (
-        <div>
+        <div className="mt-8">
           <JoinCtaCard />
         </div>
       )}

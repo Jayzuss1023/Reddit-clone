@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { getCurrentUserId } from "../auth";
 import { getUserVote } from "../db/queries";
 import { prisma } from "../prisma";
+import { PostModel } from "../generated/prisma/models";
+import { Post } from "../types";
+import { redirect } from "next/navigation";
 
 export async function votePostAction(postId: string, value: -1 | 1) {
   const userId = await getCurrentUserId();
@@ -38,4 +41,92 @@ export async function votePost(userId: string, postId: string, value: -1 | 1) {
       },
     });
   }
+}
+
+export type PostFormState = { error?: string } | null;
+
+export async function createPostAction(
+  _prev: PostFormState,
+  formData: FormData,
+): Promise<PostFormState> {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return { error: "You must be signed in to post." };
+  }
+
+  const title = String(formData.get("title"));
+  const body = String(formData.get("body"));
+  const tagsRaw = String(formData.get("tags"));
+
+  console.log(tagsRaw);
+
+  if (!title || title.trim().length < 4) {
+    return { error: "Title is too short." };
+  }
+
+  const tagSlugs = tagsRaw
+    .split(/[,#\s]+/)
+    .map((s) => s.trim().toLowerCase())
+    .slice(0, 5);
+
+  const post = await addPost({
+    authorId: userId,
+    title,
+    body,
+    tagSlugs,
+  });
+
+  revalidatePath("/");
+  revalidatePath("/submit");
+  redirect(`/post/${post.id}`);
+}
+
+export async function addPost(input: {
+  authorId: string;
+  title: string;
+  body: string;
+  tagSlugs: string[];
+}) {
+  const tagSlugs = input.tagSlugs.length ? input.tagSlugs : ["webdev"];
+  await prisma.tag.createMany({
+    data: tagSlugs.map((slug) => ({
+      slug,
+      label: slug,
+      hashColor: "$ff00fb",
+    })),
+    skipDuplicates: true,
+  });
+
+  const post = await prisma.post.create({
+    data: {
+      authorId: input.authorId,
+      title: input.title.trim(),
+      body: input.body.trim(),
+    },
+  });
+
+  await prisma.postTag.createMany({
+    data: tagSlugs.map((tag) => ({
+      postId: post.id,
+      tagSlug: tag,
+    })),
+  });
+
+  return mapPostRow(post, tagSlugs, 0);
+}
+
+function mapPostRow(
+  post: PostModel,
+  tagSlugs: string[],
+  commentCount: number,
+): Post {
+  return {
+    id: post.id,
+    authorId: post.authorId,
+    title: post.title,
+    body: post.body,
+    tagSlugs,
+    createdAt: post.createdAt.toISOString(),
+    commentCount,
+  };
 }
