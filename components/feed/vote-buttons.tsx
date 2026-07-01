@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { voteCommentAction } from "@/lib/actions/comment";
 import { votePostAction } from "@/lib/actions/post";
-// import { voteCommentAction } from "@/lib/actions/comments";
-// import { votePostAction } from "@/lib/actions/posts";
 import { cn } from "@/lib/utils";
 
 type VoteTarget = "post" | "comment";
